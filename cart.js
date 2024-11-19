@@ -1,5 +1,6 @@
 const fs=require('fs');
 const path=require('path');
+const Cart=require('./cart');
 
 const p = path.join(
     path.dirname(process.mainModule.filename),'Dynamic Routes',
@@ -32,6 +33,26 @@ module.exports=class Cart{
         fs.writeFile(p,JSON.stringify(cart),(err) =>{
             console.log(err);
         })
+        
+    })
+   }
+ 
+   static deleteProduct(id,productPrice){
+    fs.readFile(p,(err,fileContent)=>{
+        let cart ={products:[],totalPrice: 0};
+        if(!err){
+            cart=JSON.parse(fileContent);
+        }
+        //analyze the cart=> Find existing product
+        const updatedCart={...fileContent};
+        const product=updatedCart.products.find(prod=>prod.id===id);
+        const productQty=product.qty;
+        updatedCart.products=updatedCart.products.filter(prod=> prod.id===id);
+        updatedCart.totalPrice=updatedCart.totalPrice- productPrice*productQty;
+
+        fs.writeFile(p,JSON.stringify(updatedCart),(err) =>{
+                    console.log(err);
+                })
         
     })
    }
